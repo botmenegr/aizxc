@@ -3,41 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Control Panel</title>
+    <title>AI Interface</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #020617; color: #f8fafc; font-family: sans-serif; }
-        .neon-text { text-shadow: 0 0 10px #38bdf8; }
+        .chat-container::-webkit-scrollbar { width: 4px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
-    <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/80 backdrop-blur-md">
-        <h1 class="text-xl font-black neon-text text-sky-400 uppercase">Gemini CyberPanel</h1>
-        <div class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></div>
-    </div>
-    <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-950">
-        <div class="bg-slate-800/60 p-3 rounded-2xl rounded-bl-none border border-slate-700 max-w-[85%] text-sm">
-            Связь установлена. Система готова к твоему "страшному" делу. 😈
+    <div class="h-4"></div>
+
+    <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4 chat-container bg-slate-950">
         </div>
-    </div>
+
     <div class="p-4 bg-slate-900 border-t border-slate-800">
         <div class="flex gap-2">
-            <input id="inp" type="text" placeholder="Введите команду..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-sky-500 transition-all">
+            <input id="inp" type="text" placeholder="Напиши что-нибудь..." 
+                   class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-sky-600 transition-all">
             <button onclick="send()" class="bg-sky-600 px-5 py-3 rounded-xl hover:bg-sky-500 active:scale-90 transition-all">
-                GO
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
             </button>
         </div>
     </div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
+
         function send() {
             const i = document.getElementById('inp');
             const chat = document.getElementById('chat');
             if(!i.value) return;
-            chat.innerHTML += `<div class="bg-sky-700/30 p-3 rounded-2xl rounded-br-none border border-sky-600/50 max-w-[85%] ml-auto text-right text-sm">${i.value}</div>`;
+
+            const msg = i.value;
+            // Добавляем сообщение пользователя в интерфейс
+            chat.innerHTML += `<div class="bg-sky-700/30 p-3 rounded-2xl rounded-br-none border border-sky-600/50 max-w-[85%] ml-auto text-right text-sm text-sky-50">${msg}</div>`;
+            
+            // Отправляем данные боту (чтобы Gemini ответил)
+            tg.sendData(msg); 
+            
             i.value = '';
             chat.scrollTop = chat.scrollHeight;
         }
